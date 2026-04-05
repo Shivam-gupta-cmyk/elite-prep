@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElitePrep — 90-Day SDE-2 / Lead Engineer Interview Prep</title>
+  <meta name="description" content="90-day curated daily challenges. DSA, LLD, HLD, Custom DS, and Leadership — mixed daily for top 0.1% interview preparation.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="ambient-bg"></div>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="header">
+    <div class="header-inner">
+      <a class="logo" href="#">
+        <div class="logo-icon">E</div>
+        <div class="logo-text"><span>Elite</span>Prep</div>
+      </a>
+      <nav class="tab-nav" id="tabNav">
+        <button class="tab-nav-btn active" data-tab="practice" onclick="switchTab('practice')">📝 Practice</button>
+        <button class="tab-nav-btn" data-tab="analytics" onclick="switchTab('analytics')">📊 Analytics</button>
+        <button class="tab-nav-btn" data-tab="library" onclick="switchTab('library')">📚 Library</button>
+      </nav>
+      <div class="header-actions">
+        <div class="header-stats">
+          <div class="stat-badge"><span>✅</span><span id="solvedCount" class="value">0</span> solved</div>
+        </div>
+        <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ SESSION BAR (always visible) ═══ -->
+  <div class="session-bar" id="sessionBar">
+    <div class="session-bar-inner">
+      <div class="session-bar-left">
+        <button class="sb-btn sb-start" id="sbStartBtn" onclick="startStudySession()">▶ Start Session</button>
+        <button class="sb-btn sb-stop" id="sbStopBtn" onclick="stopStudySession()" style="display:none">⏹ End</button>
+        <div class="sb-timer" id="sbTimer">00:00</div>
+        <div class="sb-status-dot" id="sbStatusDot"></div>
+      </div>
+      <div class="session-bar-center">
+        <div class="sb-goal">
+          <span class="sb-goal-icon">⏱</span>
+          <div class="sb-goal-track"><div class="sb-goal-fill time" id="sbGoalTimeFill"></div></div>
+          <span class="sb-goal-text" id="sbGoalTimeText">0m / 45m</span>
+        </div>
+        <div class="sb-goal">
+          <span class="sb-goal-icon">✅</span>
+          <div class="sb-goal-track"><div class="sb-goal-fill challenge" id="sbGoalChallengeFill"></div></div>
+          <span class="sb-goal-text" id="sbGoalChallengeText">0 / 3</span>
+        </div>
+      </div>
+      <div class="session-bar-right">
+        <div class="sb-streak" id="sbStreak"><span class="sb-streak-fire">🔥</span> <span id="sbStreakCount">0</span> day streak</div>
+        <div class="sb-total" id="sbTotalToday">0m today</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-content">
+
+    <!-- ═══ TAB: PRACTICE ═══ -->
+    <div class="tab-panel active" id="tab-practice">
+
+      <!-- Streak Warning -->
+      <div class="streak-warning" id="streakWarning"></div>
+
+      <!-- Phase Selector -->
+      <div class="phase-indicator">
+        <div class="phase-pill p1 active" onclick="switchPhase(1)">🧱 Phase 1: Foundation (1-30)</div>
+        <div class="phase-pill p2" onclick="switchPhase(2)">⚡ Phase 2: Advanced (31-60)</div>
+        <div class="phase-pill p3" onclick="switchPhase(3)">🎯 Phase 3: Simulation (61-90)</div>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="toolbar">
+        <div class="search-wrap">
+          <input type="text" class="search-box" id="searchBox" placeholder="Search challenges... (Ctrl+K)" />
+        </div>
+        <button class="filter-btn active" data-cat="all" onclick="filterCategory('all',this)">All</button>
+        <button class="filter-btn" data-cat="dsa" onclick="filterCategory('dsa',this)">DSA</button>
+        <button class="filter-btn" data-cat="lld" onclick="filterCategory('lld',this)">LLD</button>
+        <button class="filter-btn" data-cat="hld" onclick="filterCategory('hld',this)">HLD</button>
+        <button class="filter-btn" data-cat="ds" onclick="filterCategory('ds',this)">DS</button>
+        <button class="filter-btn" data-cat="lead" onclick="filterCategory('lead',this)">Leadership</button>
+      </div>
+
+      <!-- Progress -->
+      <section class="progress-section">
+        <div class="progress-header">
+          <h3>📊 Overall Progress</h3>
+          <span id="progressText">0 / 630 challenges (0%)</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </section>
+
+      <!-- Day Strip -->
+      <div class="day-strip" id="dayStrip"></div>
+
+      <!-- Day Nav -->
+      <div class="day-nav">
+        <button class="day-nav-btn" id="prevDay" disabled>← Prev</button>
+        <div class="day-nav-title" id="dayTitle">Day <span>1</span></div>
+        <button class="day-nav-btn" id="nextDay">Next →</button>
+      </div>
+
+      <!-- Quote -->
+      <div class="daily-quote" id="dailyQuote"></div>
+
+      <!-- Challenges -->
+      <div class="challenges-grid" id="challengesGrid"></div>
+    </div>
+
+    <!-- ═══ TAB: ANALYTICS ═══ -->
+    <div class="tab-panel" id="tab-analytics">
+
+      <!-- Today's Summary -->
+      <div class="analytics-today">
+        <h2>📅 Today's Summary</h2>
+        <div class="today-stats">
+          <div class="today-stat-card">
+            <div class="today-stat-value" id="anTodayTime">0m</div>
+            <div class="today-stat-label">Study Time</div>
+          </div>
+          <div class="today-stat-card">
+            <div class="today-stat-value" id="anTodaySessions">0</div>
+            <div class="today-stat-label">Sessions</div>
+          </div>
+          <div class="today-stat-card">
+            <div class="today-stat-value" id="anTodayChallenges">0</div>
+            <div class="today-stat-label">Completed Today</div>
+          </div>
+          <div class="today-stat-card streak">
+            <div class="today-stat-value" id="anStreak">0</div>
+            <div class="today-stat-label">Day Streak</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Goal Settings -->
+      <div class="goal-settings-card">
+        <h3>🎯 Daily Goal</h3>
+        <div class="goal-settings-row">
+          <span>Study time:</span>
+          <div class="goal-presets">
+            <button class="goal-preset-time" data-mins="30" onclick="setDailyGoalMins(30)">30m</button>
+            <button class="goal-preset-time" data-mins="45" onclick="setDailyGoalMins(45)">45m</button>
+            <button class="goal-preset-time" data-mins="60" onclick="setDailyGoalMins(60)">1h</button>
+            <button class="goal-preset-time" data-mins="90" onclick="setDailyGoalMins(90)">1.5h</button>
+            <button class="goal-preset-time" data-mins="120" onclick="setDailyGoalMins(120)">2h</button>
+          </div>
+        </div>
+        <div class="goal-settings-row">
+          <span>Challenges:</span>
+          <div class="goal-presets">
+            <button class="goal-preset-challenge" data-count="2" onclick="setDailyGoalChallenges(2)">2</button>
+            <button class="goal-preset-challenge" data-count="3" onclick="setDailyGoalChallenges(3)">3</button>
+            <button class="goal-preset-challenge" data-count="5" onclick="setDailyGoalChallenges(5)">5</button>
+            <button class="goal-preset-challenge" data-count="7" onclick="setDailyGoalChallenges(7)">7</button>
+            <button class="goal-preset-challenge" data-count="10" onclick="setDailyGoalChallenges(10)">10</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heatmap + Weekly Stats -->
+      <div class="analytics-grid">
+        <!-- GitHub-style Heatmap -->
+        <div class="an-card heatmap-wrap">
+          <div class="an-card-title">📅 90-Day Activity</div>
+          <div class="heatmap-months" id="heatmapMonths"></div>
+          <div class="heatmap-grid" id="heatmapGrid"></div>
+          <div class="heatmap-legend">
+            <span>Less</span>
+            <div class="heatmap-legend-cells">
+              <div class="heatmap-legend-cell level-0"></div>
+              <div class="heatmap-legend-cell level-1"></div>
+              <div class="heatmap-legend-cell level-2"></div>
+              <div class="heatmap-legend-cell level-3"></div>
+              <div class="heatmap-legend-cell level-4"></div>
+            </div>
+            <span>More</span>
+            <span class="heatmap-total" id="heatmapTotalLabel"></span>
+          </div>
+        </div>
+
+        <!-- Weekly Stats -->
+        <div class="an-card weekly-stats-wrap">
+          <div class="an-card-title">📈 This Week</div>
+          <div class="weekly-summary">
+            <div class="weekly-stat-card">
+              <div class="weekly-stat-label">Total Time</div>
+              <div class="weekly-stat-value" id="weekTotalTime">0m</div>
+            </div>
+            <div class="weekly-stat-card">
+              <div class="weekly-stat-label">Active Days</div>
+              <div class="weekly-stat-value" id="weekActiveDays">0/7</div>
+            </div>
+            <div class="weekly-stat-card">
+              <div class="weekly-stat-label">Best Day</div>
+              <div class="weekly-stat-value" id="weekBestDay">—</div>
+            </div>
+            <div class="weekly-stat-card">
+              <div class="weekly-stat-label">Avg / Day</div>
+              <div class="weekly-stat-value" id="weekAvgTime">—</div>
+            </div>
+          </div>
+          <div class="week-bars" id="weekBarsChart"></div>
+        </div>
+      </div>
+
+      <!-- Mastery + Category  -->
+      <div class="analytics-grid">
+        <div class="an-card">
+          <div class="an-card-title">🎯 Topic Mastery</div>
+          <canvas id="radarChart"></canvas>
+        </div>
+        <div class="an-card">
+          <div class="an-card-title">📈 Category Progress</div>
+          <div class="cat-rows">
+            <div class="cat-row"><span class="cat-dot dsa"></span><span class="cat-label">DSA</span><span class="cat-bar-track"><span class="cat-bar-fill dsa" id="catBarDsa"></span></span><span class="cat-pct" id="catPctDsa">0%</span></div>
+            <div class="cat-row"><span class="cat-dot lld"></span><span class="cat-label">LLD</span><span class="cat-bar-track"><span class="cat-bar-fill lld" id="catBarLld"></span></span><span class="cat-pct" id="catPctLld">0%</span></div>
+            <div class="cat-row"><span class="cat-dot hld"></span><span class="cat-label">HLD</span><span class="cat-bar-track"><span class="cat-bar-fill hld" id="catBarHld"></span></span><span class="cat-pct" id="catPctHld">0%</span></div>
+            <div class="cat-row"><span class="cat-dot ds"></span><span class="cat-label">Data Struct</span><span class="cat-bar-track"><span class="cat-bar-fill ds" id="catBarDs"></span></span><span class="cat-pct" id="catPctDs">0%</span></div>
+            <div class="cat-row"><span class="cat-dot lead"></span><span class="cat-label">Leadership</span><span class="cat-bar-track"><span class="cat-bar-fill lead" id="catBarLead"></span></span><span class="cat-pct" id="catPctLead">0%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session History -->
+      <div class="an-card session-history-card">
+        <div class="an-card-title">🕐 Recent Sessions</div>
+        <div class="session-history" id="sessionHistory">
+          <div class="empty-state">No sessions recorded yet. Start your first session!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TAB: LIBRARY ═══ -->
+    <div class="tab-panel" id="tab-library">
+
+      <!-- Deep Dive Readings -->
+      <section class="lib-section" id="readingsSection">
+        <div class="lib-section-header">
+          <h2>📚 Deep Dive — System Design Readings</h2>
+          <span class="lib-subtitle">Curated daily readings to become a top 0.1% system design owner</span>
+        </div>
+        <div class="lib-day-nav">
+          <button class="day-nav-btn" onclick="libPrevDay()">← Prev Day</button>
+          <span class="lib-day-label" id="libDayLabel">Day 1</span>
+          <button class="day-nav-btn" onclick="libNextDay()">Next Day →</button>
+        </div>
+        <div class="readings-grid" id="readingsGrid"></div>
+      </section>
+
+      <!-- Airtribe Course Tracker -->
+      <section class="lib-section airtribe-section" id="airtribeSection">
+        <div class="lib-section-header">
+          <h2>📋 Airtribe Course Tracker</h2>
+          <span class="airtribe-stats" id="airtribeStats">0/128 completed</span>
+        </div>
+        <div class="airtribe-tabs">
+          <button class="airtribe-tab active" onclick="switchAirtribeTab('sd')" id="tabSD">🏗️ System Design <span class="tab-count" id="sdCount">0/78</span></button>
+          <button class="airtribe-tab" onclick="switchAirtribeTab('java')" id="tabJava">☕ Java <span class="tab-count" id="javaCount">0/50</span></button>
+        </div>
+        <div class="airtribe-progress-bar"><div class="airtribe-progress-fill" id="airtribeProgressFill"></div></div>
+        <input type="text" class="airtribe-search" id="airtribeSearch" placeholder="🔍 Search questions..." oninput="renderAirtribeList()">
+        <div class="airtribe-list" id="airtribeList"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Keyboard Shortcuts -->
+  <div class="shortcuts">
+    <span><kbd>←</kbd><kbd>→</kbd> Days</span>
+    <span><kbd>J</kbd><kbd>K</kbd> Cards</span>
+    <span><kbd>Enter</kbd> Expand</span>
+    <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Tabs</span>
+    <span><kbd>S</kbd> Session</span>
+    <span><kbd>Ctrl+K</kbd> Search</span>
+  </div>
+
+  <script src="js/data-core.js"></script>
+  <script src="js/data-phase1a.js"></script>
+  <script src="js/data-phase1b.js"></script>
+  <script src="js/data-phase1c.js"></script>
+  <script src="js/data-remaining.js"></script>
+  <script src="js/data-phase1d.js"></script>
+  <script src="js/data-phase1e.js"></script>
+  <script src="js/data-readings.js"></script>
+  <script src="js/data-readings2.js"></script>
+  <script src="js/data-airtribe.js"></script>
+  <script src="js/study-tracker.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

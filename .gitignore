@@ -1,0 +1,17 @@
+# Local Netlify folder
+.netlify
+
+# Export / tooling artifacts (not part of the deployed site)
+export-data.js
+eliteprep-*.csv
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Node
+node_modules/
