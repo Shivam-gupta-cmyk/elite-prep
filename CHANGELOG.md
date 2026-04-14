@@ -5,6 +5,36 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [3.0.0] — 2026-04-15
+
+### ☁️ Firebase Cloud Sync — Cross-Device Persistence
+
+#### Added
+- **Firebase Firestore Integration**: All user progress now syncs to the cloud automatically when signed in.
+- **Google Authentication**: One-click Google sign-in via popup. Sign-in button in the header with avatar dropdown when authenticated.
+- **Data Abstraction Layer (`db.js`)**: New `DB.load()`/`DB.save()` API wraps localStorage + Firestore writes. Background cloud sync on every save.
+- **Auto-Migration**: On first sign-in, existing localStorage data is batch-migrated to Firestore in a single transaction.
+- **Sync Toast Notifications**: Visual feedback on sync events (backup confirmation, cloud pull, errors).
+- **Auth Dropdown**: Click avatar to see name, email, sync status, and sign-out button.
+- **Offline-First Architecture**: App loads instantly from localStorage cache. Firestore updates in background. No sign-in required — full localStorage-only mode as before.
+
+#### Changed
+- Replaced all direct `localStorage.getItem/setItem` calls in `app.js`, `study-tracker.js`, and `data-airtribe.js` with `DB.load()`/`DB.save()`.
+- Active session timer (`ep_active_session`) and active tab (`ep_active_tab`) remain localStorage-only (per-tab transient state).
+- Script load order updated: Firebase SDK → firebase-config.js → db.js → data files → app logic.
+
+#### Data Synced to Firestore
+| Key | Firestore Path | Description |
+|-----|---------------|-------------|
+| `ep_completed` | `progress.completedChallenges` | Challenge completion timestamps |
+| `ep_days` | `progress.completedDays` | Day completion markers |
+| `ep_sessions` | `sessions.sessionData` | Study session history by date |
+| `ep_daily_goal` | `settings.dailyGoal` | Time & challenge goals |
+| `ep_theme` | `settings.theme` | Dark/light preference |
+| `airtribeProgress` | `airtribe.progress` | Course completion tracking |
+
+---
+
 ## [2.0.0] — 2026-04-05
 
 ### 🚀 Major Redesign — Tab-Based Architecture

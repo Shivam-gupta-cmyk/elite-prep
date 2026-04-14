@@ -9,8 +9,8 @@ let currentTab = 'practice';
 
 // Completion data — now stores timestamps for "today" tracking
 // Format: { "d1_dsa_1": "2026-04-05T12:30:00Z", ... } or { "d1_dsa_1": true } (legacy)
-let completedChallenges = JSON.parse(localStorage.getItem('ep_completed') || '{}');
-let completedDays = JSON.parse(localStorage.getItem('ep_days') || '[]');
+let completedChallenges = DB.load('ep_completed', {});
+let completedDays = DB.load('ep_days', []);
 
 // Library day (independent from practice day)
 let libDay = 1;
@@ -31,6 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('prevDay').addEventListener('click', () => navigateDay(-1));
   document.getElementById('nextDay').addEventListener('click', () => navigateDay(1));
   document.getElementById('searchBox').addEventListener('input', e => { searchQuery = e.target.value.toLowerCase(); renderDay(currentDay); });
+  // Initialize Firebase auth + Firestore sync
+  DB.init();
 });
 
 // ═══ TAB SWITCHING ═══
@@ -40,7 +42,7 @@ function switchTab(tab) {
   document.querySelector(`.tab-nav-btn[data-tab="${tab}"]`).classList.add('active');
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  localStorage.setItem('ep_active_tab', tab);
+  localStorage.setItem('ep_active_tab', tab); // Tab is per-browser, not synced
 
   // Refresh tab data when switching
   if (tab === 'analytics') {
@@ -95,7 +97,7 @@ function updateAnalyticsTodaySummary() {
 
 // ═══ THEME ═══
 function initTheme() {
-  const saved = localStorage.getItem('ep_theme') || 'dark';
+  const saved = DB.load('ep_theme', 'dark');
   document.documentElement.setAttribute('data-theme', saved);
   document.getElementById('themeToggle').textContent = saved === 'dark' ? '🌙' : '☀️';
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
@@ -110,7 +112,7 @@ function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('ep_theme', next);
+  DB.save('ep_theme', next);
   document.getElementById('themeToggle').textContent = next === 'dark' ? '🌙' : '☀️';
   if (radarChart) { updateRadarChart(); }
 }
@@ -272,7 +274,7 @@ function toggleComplete(id, btn) {
     // Store ISO timestamp instead of boolean
     completedChallenges[id] = new Date().toISOString();
   }
-  localStorage.setItem('ep_completed', JSON.stringify(completedChallenges));
+  DB.save('ep_completed', completedChallenges);
   btn.classList.toggle('done');
   btn.textContent = completedChallenges[id] ? '✓' : '';
   checkDayCompletion();
@@ -303,7 +305,7 @@ function checkDayCompletion() {
   const allDone = dayData.challenges.every(ch => completedChallenges[ch.id]);
   if (allDone && !completedDays.includes(currentDay)) { completedDays.push(currentDay); }
   else if (!allDone) { completedDays = completedDays.filter(d => d !== currentDay); }
-  localStorage.setItem('ep_days', JSON.stringify(completedDays));
+  DB.save('ep_days', completedDays);
   updateDayStrip();
 }
 

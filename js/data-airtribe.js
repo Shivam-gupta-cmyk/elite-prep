@@ -133,12 +133,10 @@ const AIRTRIBE_JAVA = [
   "Building CLI Tools in Java with Picocli"
 ];
 
-// Load saved progress from localStorage
+// Load saved progress (localStorage + Firestore sync)
 function getAirtribeProgress() {
-  try {
-    return JSON.parse(localStorage.getItem('airtribeProgress') || '{}');
-  } catch { return {}; }
+  return DB.load('airtribeProgress', {});
 }
 function saveAirtribeProgress(progress) {
-  localStorage.setItem('airtribeProgress', JSON.stringify(progress));
+  DB.save('airtribeProgress', progress);
 }

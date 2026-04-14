@@ -11,22 +11,22 @@ const ST_KEYS = {
 
 // ═══ DATA ACCESS ═══
 function getSessionData() {
-  try { return JSON.parse(localStorage.getItem(ST_KEYS.sessions) || '{}'); } catch { return {}; }
+  return DB.load(ST_KEYS.sessions, {});
 }
 function saveSessionData(data) {
-  localStorage.setItem(ST_KEYS.sessions, JSON.stringify(data));
+  DB.save(ST_KEYS.sessions, data);
 }
 function getActiveSession() {
-  try { return JSON.parse(localStorage.getItem(ST_KEYS.active)); } catch { return null; }
+  try { return JSON.parse(localStorage.getItem(ST_KEYS.active)); } catch { return null; } // Active session is per-tab, not synced
 }
 function saveActiveSession(session) {
-  localStorage.setItem(ST_KEYS.active, JSON.stringify(session));
+  localStorage.setItem(ST_KEYS.active, JSON.stringify(session)); // Active session is per-tab, not synced
 }
 function getDailyGoal() {
-  try { return JSON.parse(localStorage.getItem(ST_KEYS.goal)) || { mins: 45, challenges: 3 }; } catch { return { mins: 45, challenges: 3 }; }
+  return DB.load(ST_KEYS.goal, { mins: 45, challenges: 3 });
 }
 function saveDailyGoal(goal) {
-  localStorage.setItem(ST_KEYS.goal, JSON.stringify(goal));
+  DB.save(ST_KEYS.goal, goal);
 }
 
 // ═══ DATE HELPERS ═══

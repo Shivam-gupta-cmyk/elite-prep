@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <div class="ambient-bg"></div>
@@ -27,6 +31,21 @@
       <div class="header-actions">
         <div class="header-stats">
           <div class="stat-badge"><span>✅</span><span id="solvedCount" class="value">0</span> solved</div>
+        </div>
+        <div class="auth-container" id="authContainer">
+          <button class="auth-btn" id="signInBtn" onclick="DB.signIn()" title="Sign in with Google to sync across devices">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Sync
+          </button>
+          <div class="auth-user" id="authUser" style="display:none" onclick="DB.toggleDropdown()">
+            <img class="auth-avatar" id="authAvatar" src="" alt="" referrerpolicy="no-referrer">
+            <div class="auth-dropdown" id="authDropdown">
+              <div class="auth-name" id="authName"></div>
+              <div class="auth-email" id="authEmail"></div>
+              <div class="auth-sync-status synced" id="authSyncStatus">✓ Synced</div>
+              <button class="auth-signout-btn" onclick="event.stopPropagation();DB.signOut()">Sign Out</button>
+            </div>
+          </div>
         </div>
         <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">🌙</button>
       </div>
@@ -285,6 +304,11 @@
     <span><kbd>Ctrl+K</kbd> Search</span>
   </div>
 
+  <!-- Firebase + DB layer (must load before app code) -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/db.js"></script>
+
+  <!-- Data files -->
   <script src="js/data-core.js"></script>
   <script src="js/data-phase1a.js"></script>
   <script src="js/data-phase1b.js"></script>
@@ -295,6 +319,8 @@
   <script src="js/data-readings.js"></script>
   <script src="js/data-readings2.js"></script>
   <script src="js/data-airtribe.js"></script>
+
+  <!-- App logic -->
   <script src="js/study-tracker.js"></script>
   <script src="js/app.js"></script>
 </body>
