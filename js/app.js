@@ -50,6 +50,8 @@ function switchTab(tab) {
   } else if (tab === 'library') {
     renderReadings();
     if (typeof AIRTRIBE_SD !== 'undefined') renderAirtribeList();
+  } else if (tab === 'notes') {
+    if (typeof renderNotes === 'function') renderNotes();
   }
 }
 
@@ -104,7 +106,7 @@ function initTheme() {
 
   // Restore active tab
   const savedTab = localStorage.getItem('ep_active_tab');
-  if (savedTab && ['practice', 'analytics', 'library'].includes(savedTab)) {
+  if (savedTab && ['practice', 'analytics', 'library', 'notes'].includes(savedTab)) {
     switchTab(savedTab);
   }
 }
@@ -409,6 +411,7 @@ function initKeyboard() {
     else if (e.key === '1') { switchTab('practice'); }
     else if (e.key === '2') { switchTab('analytics'); }
     else if (e.key === '3') { switchTab('library'); }
+    else if (e.key === '4') { switchTab('notes'); }
     else if (e.key === 's' || e.key === 'S') {
       if (typeof getActiveSession === 'function') {
         if (getActiveSession()) stopStudySession(); else startStudySession();

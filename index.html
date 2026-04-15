@@ -6,12 +6,14 @@
   <title>ElitePrep — 90-Day SDE-2 / Lead Engineer Interview Prep</title>
   <meta name="description" content="90-day curated daily challenges. DSA, LLD, HLD, Custom DS, and Leadership — mixed daily for top 0.1% interview preparation.">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
   <div class="ambient-bg"></div>
@@ -27,6 +29,7 @@
         <button class="tab-nav-btn active" data-tab="practice" onclick="switchTab('practice')">📝 Practice</button>
         <button class="tab-nav-btn" data-tab="analytics" onclick="switchTab('analytics')">📊 Analytics</button>
         <button class="tab-nav-btn" data-tab="library" onclick="switchTab('library')">📚 Library</button>
+        <button class="tab-nav-btn" data-tab="notes" onclick="switchTab('notes')">💻 Notes</button>
       </nav>
       <div class="header-actions">
         <div class="header-stats">
@@ -292,6 +295,67 @@
         <div class="airtribe-list" id="airtribeList"></div>
       </section>
     </div>
+
+    <!-- ═══ TAB: NOTES ═══ -->
+    <div class="tab-panel" id="tab-notes">
+      <div class="notes-container">
+        <!-- Header -->
+        <div class="notes-header">
+          <div class="notes-header-left">
+            <h2>💻 Code Notebook</h2>
+            <span class="notes-subtitle">Write code at office, review at home — synced across devices</span>
+          </div>
+          <div class="notes-header-right">
+            <span class="notes-count" id="notesCount">0 snippets</span>
+            <button class="notes-new-btn" onclick="createNote()">+ New Snippet</button>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <input type="text" class="notes-search" id="notesSearch" placeholder="🔍 Search snippets..." oninput="searchNotes()">
+
+        <!-- Snippet Cards -->
+        <div class="notes-cards" id="notesCards"></div>
+
+        <!-- Code Editor -->
+        <div class="notes-editor" id="notesEditor" style="display:none">
+          <div class="notes-editor-toolbar">
+            <input type="text" class="notes-title-input" id="noteTitle" placeholder="Snippet title..." oninput="autoSaveNote()">
+            <select class="notes-lang-select" id="noteLang" onchange="autoSaveNote()">
+              <option value="java">Java</option>
+              <option value="python">Python</option>
+              <option value="javascript">JavaScript</option>
+              <option value="typescript">TypeScript</option>
+              <option value="cpp">C++</option>
+              <option value="go">Go</option>
+              <option value="sql">SQL</option>
+              <option value="rust">Rust</option>
+              <option value="text">Plain Text</option>
+            </select>
+            <button class="notes-dup-btn" onclick="duplicateActiveNote()" title="Duplicate snippet">⧉ Clone</button>
+            <button class="notes-format-btn" id="formatBtn" onclick="formatCode()" title="Auto-format code (Shift+Alt+F)">{ } Format</button>
+          </div>
+          <div class="notes-code-wrapper">
+            <pre class="notes-code-backdrop" id="noteCodeBackdrop" aria-hidden="true"><code id="noteCodeHighlight"></code></pre>
+            <textarea class="notes-code-area" id="noteCode" placeholder="Write your code here...&#10;&#10;  • Tab key inserts spaces&#10;  • Enter auto-indents&#10;  • Auto-saves as you type&#10;  • Synced to cloud when signed in" oninput="highlightCode();autoSaveNote()" spellcheck="false"></textarea>
+          </div>
+          <div class="notes-editor-footer">
+            <span class="notes-autosave" id="notesAutoSave"></span>
+            <span class="notes-meta"><span id="notesLines">0 lines</span> · <span id="notesChars">0 chars</span></span>
+            <span class="notes-updated" id="notesUpdated"></span>
+            <button class="notes-delete-btn" onclick="deleteActiveNote()">🗑 Delete</button>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="notes-empty" id="notesEmpty">
+          <div class="notes-empty-icon">📝</div>
+          <div class="notes-empty-title">No snippets yet</div>
+          <div class="notes-empty-hint">Create your first code snippet — syncs to the cloud so you can access it from any device</div>
+          <button class="notes-new-btn" onclick="createNote()">+ Create First Snippet</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Keyboard Shortcuts -->
@@ -299,7 +363,7 @@
     <span><kbd>←</kbd><kbd>→</kbd> Days</span>
     <span><kbd>J</kbd><kbd>K</kbd> Cards</span>
     <span><kbd>Enter</kbd> Expand</span>
-    <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Tabs</span>
+    <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> Tabs</span>
     <span><kbd>S</kbd> Session</span>
     <span><kbd>Ctrl+K</kbd> Search</span>
   </div>
@@ -323,5 +387,6 @@
   <!-- App logic -->
   <script src="js/study-tracker.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/notes.js"></script>
 </body>
 </html>

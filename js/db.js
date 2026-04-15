@@ -27,6 +27,7 @@ const DB = (() => {
     'ep_daily_goal':      { doc: 'settings',  field: 'dailyGoal' },
     'ep_theme':           { doc: 'settings',  field: 'theme' },
     'airtribeProgress':   { doc: 'airtribe',  field: 'progress' },
+    'ep_notes':           { doc: 'notes',     field: 'snippets' },
   };
 
   // Keys that are NOT synced (transient / per-tab state)
@@ -176,6 +177,15 @@ const DB = (() => {
     if (typeof updateStreakWidget === 'function') updateStreakWidget();
     if (typeof renderAirtribeList === 'function') renderAirtribeList();
     if (typeof renderSessionHistory === 'function') renderSessionHistory();
+
+    // Reload notes from updated localStorage
+    if (typeof notes !== 'undefined') {
+      notes = load('ep_notes', []);
+      if (notes.length > 0 && !notes.find(n => n.id === activeNoteId)) {
+        activeNoteId = notes[0].id;
+      }
+      if (typeof renderNotes === 'function') renderNotes();
+    }
 
     _showToast('✓ Synced from cloud');
   }
